@@ -35,11 +35,13 @@ module.exports.getUserById = function(id, callback) {
   User.findById(id, callback);
 }
 
+//query to find user by their email
 module.exports.getUserByEmail = function(email, callback) {
   const query = {email: email}
   User.findOne(query, callback);
 }
 
+//used for user authentication
 module.exports.addUser = function(newUser, callback) {
   User.getUserByEmail(newUser.email, function(err, user) {
     if(!user) {
@@ -57,6 +59,23 @@ module.exports.addUser = function(newUser, callback) {
   });
 }
 
+//upon authentication, update their current record in the mongo database, including their instagram access token
+module.exports.updateInstagramAuthorizationStatus = function(id, data, callback){
+  var userInfo = data.user;
+
+  User.findById(id, (err, user) => {
+    user.instagram_verified = true;
+    user.instagram.username = userInfo.username;
+    user.instagram.id = userInfo.id;
+    user.instagram.full_name = userInfo.full_name;
+    user.instagram.access_token = data.accessToken;
+    // user.instagram.id = data.user.id;
+    // user.instagram.
+    user.save(callback);
+  });
+}
+
+//compare given password with password of user in database
 module.exports.comparePassword = function(candidatePassword, hash, callback) {
   bcrypt.compare(candidatePassword, hash, (err, isMatch) => {
     if(err) throw err;

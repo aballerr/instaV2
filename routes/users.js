@@ -8,7 +8,7 @@ const User = require('../models/user');
 
 // Register
 router.post('/register', (req, res ,next) => {
-  console.log("this is running");
+  
   let newUser = new User({
     email: req.body.email,
     password: req.body.password,
@@ -65,10 +65,25 @@ router.post('/authenticate', (req, res ,next) => {
   });
 });
 
+
+router.post('/profile', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+  console.log(request.body);
+
+  res.send("it worked!");
+});
+
 // profile
 router.get('/profile', passport.authenticate('jwt', {session: false}), (req, res, next) => {
   //res.send('profile');
+
    res.json({user: req.user})
+});
+
+
+router.get('/nothing', passport.authenticate('jwt', {session: false}), (req, res, next) => {
+  //res.send('profile');
+
+    res.send('ello mate');
 });
 
 router.get('/test', (req, res, next) => {

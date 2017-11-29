@@ -217,24 +217,29 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 
 
 var AuthenticateComponent = (function () {
-    function AuthenticateComponent(authService, activatedRoute, http) {
+    function AuthenticateComponent(authService, activatedRoute, http, router) {
         this.authService = authService;
         this.activatedRoute = activatedRoute;
         this.http = http;
+        this.router = router;
     }
     AuthenticateComponent.prototype.ngOnInit = function () {
         var _this = this;
         if (this.authService.loggedIn) {
             this.activatedRoute.queryParams.subscribe(function (params) {
-                console.log(params.code);
                 localStorage.setItem('code', params.code);
-                console.log(params);
-                _this.http.post("http://localhost:3000/instagram/token", { params: params }).subscribe(function (data) {
-                    //  var body = JSON.parse(data["_body"]);
-                    console.log(data);
-                    //console.log(body.user);
-                    //  this.authService.storeUser(body.user, body.accessToken);
+                _this.authService.loadToken();
+                _this.authService.verifyInstagram(params).subscribe(function (data) {
+                    _this.authService.saveInstagramToken(data);
+                    _this.router.navigate(['/']);
                 });
+                // this.http.post("http://localhost:3000/instagram/token", {params: params}).subscribe((data) => {
+                // data = JSON.parse(data["_body"]);
+                // var token = data["accessToken"];
+                // localStorage.setItem('instagram_token', token);
+                //
+                // this.router.navigate(['/']);
+                // });
             });
         }
     };
@@ -246,10 +251,10 @@ AuthenticateComponent = __decorate([
         template: __webpack_require__("../../../../../src/app/components/authenticate/authenticate.component.html"),
         styles: [__webpack_require__("../../../../../src/app/components/authenticate/authenticate.component.css")]
     }),
-    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__services_authorization_service__["a" /* AuthorizationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_authorization_service__["a" /* AuthorizationService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["a" /* ActivatedRoute */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_http__["Http"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_http__["Http"]) === "function" && _c || Object])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_3__services_authorization_service__["a" /* AuthorizationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_3__services_authorization_service__["a" /* AuthorizationService */]) === "function" && _a || Object, typeof (_b = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["a" /* ActivatedRoute */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["a" /* ActivatedRoute */]) === "function" && _b || Object, typeof (_c = typeof __WEBPACK_IMPORTED_MODULE_1__angular_http__["Http"] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__angular_http__["Http"]) === "function" && _c || Object, typeof (_d = typeof __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_2__angular_router__["b" /* Router */]) === "function" && _d || Object])
 ], AuthenticateComponent);
 
-var _a, _b, _c;
+var _a, _b, _c, _d;
 //# sourceMappingURL=authenticate.component.js.map
 
 /***/ }),
@@ -513,7 +518,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/profile/profile.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<form class=\"container\">\n  <h2 class=\"page-header\">Login</h2>\n  <a href=\"/instagram/authenticate\" class=\"btn btn-primary\">Authorize Instagram</a>\n</form>\n"
+module.exports = "<form class=\"container\">\n  <h2 class=\"page-header\">Login</h2>\n  <button (click)=\"printToken()\">print token</button>\n  <a href=\"/instagram/authenticate\" class=\"btn btn-primary\">Authorize Instagram</a>\n</form>\n"
 
 /***/ }),
 
@@ -523,6 +528,7 @@ module.exports = "<form class=\"container\">\n  <h2 class=\"page-header\">Login<
 "use strict";
 /* harmony export (binding) */ __webpack_require__.d(__webpack_exports__, "a", function() { return ProfileComponent; });
 /* harmony import */ var __WEBPACK_IMPORTED_MODULE_0__angular_core__ = __webpack_require__("../../../core/@angular/core.es5.js");
+/* harmony import */ var __WEBPACK_IMPORTED_MODULE_1__services_authorization_service__ = __webpack_require__("../../../../../src/app/services/authorization.service.ts");
 var __decorate = (this && this.__decorate) || function (decorators, target, key, desc) {
     var c = arguments.length, r = c < 3 ? target : desc === null ? desc = Object.getOwnPropertyDescriptor(target, key) : desc, d;
     if (typeof Reflect === "object" && typeof Reflect.decorate === "function") r = Reflect.decorate(decorators, target, key, desc);
@@ -533,9 +539,16 @@ var __metadata = (this && this.__metadata) || function (k, v) {
     if (typeof Reflect === "object" && typeof Reflect.metadata === "function") return Reflect.metadata(k, v);
 };
 
+
 var ProfileComponent = (function () {
-    function ProfileComponent() {
+    function ProfileComponent(authService) {
+        this.authService = authService;
     }
+    ProfileComponent.prototype.printToken = function () {
+        this.authService.getProfile().subscribe(function (data) {
+            console.log(data);
+        });
+    };
     ProfileComponent.prototype.ngOnInit = function () {
     };
     return ProfileComponent;
@@ -546,9 +559,10 @@ ProfileComponent = __decorate([
         template: __webpack_require__("../../../../../src/app/components/profile/profile.component.html"),
         styles: [__webpack_require__("../../../../../src/app/components/profile/profile.component.css")]
     }),
-    __metadata("design:paramtypes", [])
+    __metadata("design:paramtypes", [typeof (_a = typeof __WEBPACK_IMPORTED_MODULE_1__services_authorization_service__["a" /* AuthorizationService */] !== "undefined" && __WEBPACK_IMPORTED_MODULE_1__services_authorization_service__["a" /* AuthorizationService */]) === "function" && _a || Object])
 ], ProfileComponent);
 
+var _a;
 //# sourceMappingURL=profile.component.js.map
 
 /***/ }),
@@ -716,6 +730,25 @@ var AuthorizationService = (function () {
     AuthorizationService.prototype.loggedIn = function () {
         this.loadToken();
         return Object(__WEBPACK_IMPORTED_MODULE_2_angular2_jwt__["tokenNotExpired"])('id_token');
+    };
+    AuthorizationService.prototype.verifyInstagram = function (params) {
+        var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["Headers"]();
+        this.loadToken();
+        headers.append('Authorization', this.authToken);
+        headers.append('Content-Type', 'application/json');
+        return this.http.post('http://localhost:3000/instagram/token', { params: params }, { headers: headers });
+    };
+    AuthorizationService.prototype.saveInstagramToken = function (data) {
+        var token = data["accessToken"];
+        localStorage.setItem('instagram_token', token);
+    };
+    AuthorizationService.prototype.getProfile = function () {
+        var headers = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["Headers"]();
+        this.loadToken();
+        headers.append('Authorization', this.authToken);
+        headers.append('Content-Type', 'application/json');
+        return this.http.get('http://localhost:3000/users/profile', { headers: headers })
+            .map(function (res) { return res.json(); });
     };
     return AuthorizationService;
 }());

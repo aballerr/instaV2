@@ -13,20 +13,29 @@ export class AuthenticateComponent implements OnInit {
 
   constructor(private authService: AuthorizationService,
     private activatedRoute: ActivatedRoute,
-    private http: Http) { }
+    private http: Http,
+    private router: Router) { }
 
     ngOnInit() {
       if(this.authService.loggedIn) {
         this.activatedRoute.queryParams.subscribe((params: Params) => {
-          console.log(params.code);
+
           localStorage.setItem('code', params.code);
-          console.log(params);
-          this.http.post("http://localhost:3000/instagram/token", {params: params}).subscribe((data) => {
-          //  var body = JSON.parse(data["_body"]);
-          console.log(data);
-            //console.log(body.user);
-            //  this.authService.storeUser(body.user, body.accessToken);
+          this.authService.loadToken();
+
+
+
+          this.authService.verifyInstagram(params).subscribe(data => {
+            this.authService.saveInstagramToken(data);
+            this.router.navigate(['/']);
           });
+          // this.http.post("http://localhost:3000/instagram/token", {params: params}).subscribe((data) => {
+          // data = JSON.parse(data["_body"]);
+          // var token = data["accessToken"];
+          // localStorage.setItem('instagram_token', token);
+          //
+          // this.router.navigate(['/']);
+          // });
         });
       }
     }

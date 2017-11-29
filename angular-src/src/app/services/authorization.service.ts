@@ -15,7 +15,7 @@ export class AuthorizationService {
     let headers = new Headers();
     headers.append('Content-Type', 'application/json');
     return this.http.post('http://localhost:3000/users/register', user, {headers: headers})
-      .map(res => res.json());
+    .map(res => res.json());
   }
 
   //Sends and authentication request to the server
@@ -41,12 +41,37 @@ export class AuthorizationService {
   loadToken(){
     const token = localStorage.getItem('id_token');
     this.authToken = token;
+
   }
 
   loggedIn(){
 
     this.loadToken();
     return tokenNotExpired('id_token');
+  }
+
+  verifyInstagram(params){
+
+    let headers = new Headers();
+    this.loadToken();
+    headers.append('Authorization', this.authToken);
+    headers.append('Content-Type', 'application/json');
+
+    return this.http.post('http://localhost:3000/instagram/token',{params: params}, {headers: headers});
+  }
+
+  saveInstagramToken(data){
+    var token = data["accessToken"];
+    localStorage.setItem('instagram_token', token);
+  }
+
+  getProfile(){
+    let headers = new Headers();
+    this.loadToken();
+    headers.append('Authorization', this.authToken);
+    headers.append('Content-Type', 'application/json');
+    return this.http.get('http://localhost:3000/users/profile', {headers: headers})
+    .map(res => res.json());
   }
 
 }

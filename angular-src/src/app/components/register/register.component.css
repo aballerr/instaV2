@@ -1,0 +1,10 @@
+#checklist {
+  display: flex;
+  flex-direction: row;
+
+}
+
+.contain {
+
+  width: 150px;
+}

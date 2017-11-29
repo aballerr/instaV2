@@ -13,10 +13,11 @@ export class RegisterComponent implements OnInit {
   email: String;
   password: String;
   confirmPassword: String;
+  address: String;
 
-  constructor(private _flashMessage: FlashMessagesService,
-    private _validate: ValidateService,
-    private _router: Router,
+  constructor(private flashMessage: FlashMessagesService,
+    private validate: ValidateService,
+    private router: Router,
     private authService: AuthorizationService) { }
 
   ngOnInit() {
@@ -29,29 +30,29 @@ export class RegisterComponent implements OnInit {
     user["email"] = this.email;
     user["password"] = this.password;
 
-    if(this._validate.validateRegister(user, this.confirmPassword)){
+    if(this.validate.validateRegister(user, this.confirmPassword)){
 
       this.authService.registerUser(user).subscribe(data => {
         if(data.success){
-          this._flashMessage.show('Registration successful!', {cssClass: 'alert-success', timeout: 3000});
+          this.flashMessage.show('Registration successful!', {cssClass: 'alert-success', timeout: 3000});
         }
         else {
-          this._flashMessage.show('User already exists', {cssClass: 'alert-danger', timeout: 3000});
+          this.flashMessage.show('User already exists', {cssClass: 'alert-danger', timeout: 3000});
         }
       })
-      this._router.navigate(['/login']);
+      this.router.navigate(['/login']);
     }
     else {
-      if(!this._validate.validatePasswordsMatch(this.password, this.confirmPassword)){
-        this._flashMessage.show('Passwords need to match', {cssClass: 'alert-danger', timeout: 3000});
+      if(!this.validate.validatePasswordsMatch(this.password, this.confirmPassword)){
+        this.flashMessage.show('Passwords need to match', {cssClass: 'alert-danger', timeout: 3000});
       }
-      if(!this._validate.validateEmail(this.email)) {
-        this._flashMessage.show('Not a valid email address', {cssClass: 'alert-danger', timeout: 3000});
+      if(!this.validate.validateEmail(this.email)) {
+        this.flashMessage.show('Not a valid email address', {cssClass: 'alert-danger', timeout: 3000});
       }
-      if(!this._validate.requiredLength(this.password, 6)){
-        this._flashMessage.show('Password need to be longer', {cssClass: 'alert-danger', timeout: 3000});
+      if(!this.validate.requiredLength(this.password, 6)){
+        this.flashMessage.show('Password need to be longer', {cssClass: 'alert-danger', timeout: 3000});
       }
-      this._router.navigate(['login']);
+      this.router.navigate(['login']);
     }
   }
 }

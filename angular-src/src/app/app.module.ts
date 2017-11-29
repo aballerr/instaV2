@@ -14,6 +14,7 @@ import { ValidateService } from './services/validate.service';
 import { AuthorizationService } from './services/authorization.service';
 import { ProfileComponent } from './components/profile/profile.component';
 import { AuthenticateComponent } from './components/authenticate/authenticate.component';
+import { SearchRequestsService } from './services/search-requests.service';
 
 const appRoutes: Routes = [
   {
@@ -55,7 +56,7 @@ const appRoutes: Routes = [
     HttpModule,
     FlashMessagesModule
   ],
-  providers: [ValidateService, AuthorizationService],
+  providers: [ValidateService, AuthorizationService, SearchRequestsService],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

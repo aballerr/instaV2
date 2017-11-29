@@ -21,6 +21,7 @@ mongoose.connection.on('error', (err) => {
 const app = express();
 const users = require('./routes/users');
 const instagram = require('./routes/instagram');
+const google = require('./routes/google');
 
 app.use(express.static(path.join(__dirname, 'public')));
 
@@ -43,6 +44,7 @@ require('./config/passport')(passport);
 //routes
 app.use('/users', users);
 app.use('/instagram', instagram);
+app.use('/google', google);
 
 app.get('*', (req, res) => {
 

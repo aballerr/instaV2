@@ -1,1 +1,12 @@
-<h1>Welcome to home</h1>
+<div class="row">
+  <div class="col-lg-4"></div>
+  <div class="col-lg-4">
+    <div class="input-group">
+      <input [(ngModel)]="address" name="address" type="text" class="form-control" />
+      <span class="input-group-btn">
+        <button (click)="search()" class="btn btn-default"  type="button">Search</button>
+      </span>
+    </div><!-- /input-group -->
+  </div><!-- /.col-lg-4 -->
+  <div class="col-lg-4"></div>
+</div>

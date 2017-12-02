@@ -2,6 +2,7 @@
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const config = require('../config/database');
+const request = require('request');
 
 // User Schema
 const UserSchema = mongoose.Schema({
@@ -24,6 +25,7 @@ const UserSchema = mongoose.Schema({
     username: {},
     full_name: {},
     access_token: {},
+    followed_by: {},
     pictures: []
   }
 });
@@ -64,14 +66,21 @@ module.exports.updateInstagramAuthorizationStatus = function(id, data, callback)
   var userInfo = data.user;
 
   User.findById(id, (err, user) => {
+
     user.instagram_verified = true;
     user.instagram.username = userInfo.username;
     user.instagram.id = userInfo.id;
     user.instagram.full_name = userInfo.full_name;
     user.instagram.access_token = data.accessToken;
-    // user.instagram.id = data.user.id;
-    // user.instagram.
-    user.save(callback);
+
+    var requestURL ="https://api.instagram.com/v1/users/"+userInfo.id+"/?access_token="+data.accessToken;
+    request(requestURL, (err, res, body) => {
+      body = JSON.parse(body);
+
+
+      user.instagram.followed_by = body.data.counts.followed_by;
+        user.save(callback);
+    })
   });
 }
 

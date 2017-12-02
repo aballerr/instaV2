@@ -12,8 +12,7 @@ router.get('/distance', (req, res, next) => {
   var destinations = "Washington,DC";
   var requestURL = config.baseURL+config.units+config.origins+origins+config.destinations+destinations+config.key+config.matrixKey;
 
-
-
+  
   request(requestURL, (err, res2, body) => {
 
     console.log('statusCode:', res2 && res.statusCode); // Print the response status code if a response was received

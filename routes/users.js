@@ -8,7 +8,7 @@ const User = require('../models/user');
 
 // Register
 router.post('/register', (req, res ,next) => {
-  
+
   let newUser = new User({
     email: req.body.email,
     password: req.body.password,
@@ -48,14 +48,15 @@ router.post('/authenticate', (req, res ,next) => {
           expiresIn: 604800
         });
 
-        console.log(user);
+
         res.json({
           success: true,
           token: 'JWT '+token,
           user: {
             id: user._id,
             email: user.email,
-            instagram_verified: user.instagram_verified
+            instagram_verified: user.instagram_verified,
+            instagramAccessToken: user.instagram.access_token
           }
         });
       } else {
@@ -67,7 +68,7 @@ router.post('/authenticate', (req, res ,next) => {
 
 
 router.post('/profile', passport.authenticate('jwt', {session: false}), (req, res, next) => {
-  console.log(request.body);
+
 
   res.send("it worked!");
 });
@@ -78,18 +79,6 @@ router.get('/profile', passport.authenticate('jwt', {session: false}), (req, res
 
    res.json({user: req.user})
 });
-
-
-router.get('/nothing', passport.authenticate('jwt', {session: false}), (req, res, next) => {
-  //res.send('profile');
-
-    res.send('ello mate');
-});
-
-router.get('/test', (req, res, next) => {
-  res.send("hello there");
-});
-
 
 
 

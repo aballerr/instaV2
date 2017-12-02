@@ -6,12 +6,15 @@ const config = require('../config/instagram');
 
 const User = require('../models/user');
 
+
+//authenticates a users instagram
 router.get('/authenticate', (req, res, next) => {
   var requestURL = 'https://api.instagram.com/oauth/authorize/?client_id='+config.clientID+'&redirect_uri='+config.redirect_uri+'&response_type=code'+config.scope;
   res.redirect(requestURL);
 });
 
 
+//
 router.post('/token', passport.authenticate('jwt', {session: false}), (req, res, next) => {
 
   var code = req.body.params.code
@@ -57,6 +60,30 @@ router.post('/token', passport.authenticate('jwt', {session: false}), (req, res,
   });
 });
 
+// //validates that an access token still works
+// function validate(instagramAccessToken) {
+//
+// }
+//validates that a users current token is still viable
+router.get('/validate',  passport.authenticate('jwt', {session: false}), (req, res, next) => {
+  var userID = req.user.instagram.id;
+  var accessToken = "/?access_token="+req.user.instagram.access_token;
+  var requestURL = "https://api.instagram.com/v1/users/"+userID+accessToken;
+    console.log(requestURL);
+
+    request(requestURL, (err, res2, body) => {
+      try {
+        body = JSON.parse(body);
+
+        if(body.data.id == req.user.instagram.id){
+          res.send("TOKEN STILL VALID");
+        }
+      }
+      catch(error){
+        res.send("TOKEN IS INVALID");
+      }
+    });
+});
 
 
 module.exports = router;

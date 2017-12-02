@@ -7,16 +7,28 @@ import { AuthorizationService } from '../../services/authorization.service';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
+  state:boolean = false;
 
-  constructor(private authService: AuthorizationService) { }
+  constructor(private authService: AuthorizationService) {
 
-  printToken(){
-    this.authService.getProfile().subscribe(data => {
-      console.log(data);
-    })
+
+  }
+
+
+  checkToken() {
+    this.authService.validateInstagramToken().subscribe(data => {
+
+       if(data["_body"] == "TOKEN STILL VALID"){
+         this.state = false;
+       }
+       else {
+         this.state = true;
+       }
+    });
   }
 
   ngOnInit() {
+    this.checkToken();
   }
 
 }

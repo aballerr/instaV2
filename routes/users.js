@@ -12,6 +12,7 @@ router.post('/register', (req, res ,next) => {
   let newUser = new User({
     email: req.body.email,
     password: req.body.password,
+    address: req.body.address,
     instagram_verified: false
   });
 
@@ -56,6 +57,7 @@ router.post('/authenticate', (req, res ,next) => {
             id: user._id,
             email: user.email,
             instagram_verified: user.instagram_verified,
+            pictures: user.instagram.pictures,
             instagramAccessToken: user.instagram.access_token
           }
         });
@@ -66,6 +68,19 @@ router.post('/authenticate', (req, res ,next) => {
   });
 });
 
+//will be used to generate a bunch of random user data with NO instagram information
+router.get('/randomUserData', (req, res, next) => {
+    User.generateRandomUserData((err, user) => {
+      if(err){
+        console.log(err);
+      }
+      else {
+        console.log("USER: " + user);
+      }
+    });
+    res.send("success");
+});
+
 
 router.post('/profile', passport.authenticate('jwt', {session: false}), (req, res, next) => {
 
@@ -73,13 +88,10 @@ router.post('/profile', passport.authenticate('jwt', {session: false}), (req, re
   res.send("it worked!");
 });
 
-// profile
+// get the users profile
 router.get('/profile', passport.authenticate('jwt', {session: false}), (req, res, next) => {
-  //res.send('profile');
-
    res.json({user: req.user})
 });
-
 
 
 

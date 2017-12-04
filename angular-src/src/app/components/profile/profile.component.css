@@ -1,0 +1,12 @@
+img {
+  width: 300px;
+  height: 300px;
+  margin: 5px;
+}
+
+
+.containa {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}

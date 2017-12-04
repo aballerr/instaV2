@@ -27,7 +27,7 @@ export class AuthenticateComponent implements OnInit {
 
           this.authService.verifyInstagram(params).subscribe(data => {
             this.authService.saveInstagramToken(data);
-            this.router.navigate(['/']);
+            this.router.navigate(['/profile']);
           });
           // this.http.post("http://localhost:3000/instagram/token", {params: params}).subscribe((data) => {
           // data = JSON.parse(data["_body"]);

@@ -5,49 +5,55 @@
     <input type="text" [(ngModel)]="email" name="email" class="form-control">
   </div>
   <div class="form-group">
+    <label>Full Name</label>
+    <input type="text" [(ngModel)]="fullName" name="fullName" class="form-control">
+  </div>
+
+  <div class="form-group">
     <label>Work Address</label>
     <input type="text" [(ngModel)]="address" name="address" class="form-control">
   </div>
+    <label>Styles</label><br/>
   <div class="form-group" id="checklist">
 
     <div class="contain">
-      <label class="container">One
-        <input type="checkbox" checked="checked">
-        <span class="checkmark"></span>
-      </label>
-
-      <label class="container">Two
+      <label class="container">Traditional
         <input type="checkbox">
         <span class="checkmark"></span>
       </label>
 
-      <label class="container">Three
+      <label class="container">Realism
         <input type="checkbox">
         <span class="checkmark"></span>
       </label>
 
-      <label class="container">Four
+      <label class="container">Watercolor
+        <input type="checkbox">
+        <span class="checkmark"></span>
+      </label>
+
+      <label class="container">Tribal
         <input type="checkbox">
         <span class="checkmark"></span>
       </label>
     </div>
     <div class="contain">
-      <label class="container">One
-        <input type="checkbox" checked="checked">
-        <span class="checkmark"></span>
-      </label>
-
-      <label class="container">Two
+      <label class="container">New School
         <input type="checkbox">
         <span class="checkmark"></span>
       </label>
 
-      <label class="container">Threeeee
+      <label class="container">Neo Traditional
         <input type="checkbox">
         <span class="checkmark"></span>
       </label>
 
-      <label class="container">Four
+      <label class="container">Japanese
+        <input type="checkbox">
+        <span class="checkmark"></span>
+      </label>
+
+      <label class="container">Black and Grey
         <input type="checkbox">
         <span class="checkmark"></span>
       </label>
@@ -61,5 +67,6 @@
     <label>Confirm Password</label>
     <input type="text" [(ngModel)]="confirmPassword" name="confirmPassword" type="password"  class="form-control">
   </div>
+
   <input type="submit" class="btn btn-primary" value="Submit">
 </form>

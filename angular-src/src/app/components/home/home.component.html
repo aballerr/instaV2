@@ -1,6 +1,9 @@
+
 <div class="row">
   <div class="col-lg-4"></div>
   <div class="col-lg-4">
+    <label>{{_range}} {{unit}}</label>
+    <input type="range"  [(ngModel)]="range" name="" id="points" value="range" min="0" max="3000">
     <div class="input-group">
       <input [(ngModel)]="address" name="address" type="text" class="form-control" />
       <span class="input-group-btn">
@@ -8,5 +11,8 @@
       </span>
     </div><!-- /input-group -->
   </div><!-- /.col-lg-4 -->
+  <div  *ngFor="let result of results" class="container">
+    <li> <b>Address:</b> {{result.destination_address}} <b>ranges:</b> {{result.distance.text}}</li>
+  </div>
   <div class="col-lg-4"></div>
 </div>

@@ -8,11 +8,12 @@ export class SearchRequestsService {
   private baseURL:string = "http://localhost:3000/";
 
   //search based on a given address
-  search(address) {
-    const requestURL = this.baseURL+"google/distance";
+  search(address, range) {
+    const requestURL = this.baseURL+"google/distances";
 
     let params: URLSearchParams = new URLSearchParams();
     params.set('address', address);
+    params.set('range', range);
     let requestOptions = new RequestOptions();
     requestOptions.search = params;
 

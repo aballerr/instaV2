@@ -21,20 +21,25 @@ export class ValidateService {
   }
 
 
-  validateRegister(user, passwordConfirmation) {
-    if(this.isUndefined(user.email) || this.isUndefined(user.password) || this.isUndefined(passwordConfirmation)){
+  validateRegister(user, passwordConfirmation, address) {
+    if(this.isUndefined(user.email) || this.isUndefined(user.password) || this.isUndefined(passwordConfirmation) || this.isUndefined(address)){
       return false;
     }
     else if (!this.validatePasswordsMatch(user.password, passwordConfirmation)){
       return false;
     }
+    else if (address.length == 0 || user.password.length < 6) {
+      return false;
+    }
     else {
+
       return this.validateEmail(user.email);
     }
   }
 
-  requiredLength(password, length){
-    return password.length > length;
+  requiredLength(value, length){
+
+    return value.length > length;
   }
 
   //user should have both a valid email (doesn't need to be regisetered) and password as input

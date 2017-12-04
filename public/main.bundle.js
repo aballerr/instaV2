@@ -233,7 +233,7 @@ var AuthenticateComponent = (function () {
                 _this.authService.loadToken();
                 _this.authService.verifyInstagram(params).subscribe(function (data) {
                     _this.authService.saveInstagramToken(data);
-                    _this.router.navigate(['/']);
+                    _this.router.navigate(['/profile']);
                 });
                 // this.http.post("http://localhost:3000/instagram/token", {params: params}).subscribe((data) => {
                 // data = JSON.parse(data["_body"]);
@@ -269,7 +269,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, "", ""]);
+exports.push([module.i, "li {\n  list-style: none;\n}\n\n\nb {\n  font-size: 18px;\n  font-weight: bold;\n}\n", ""]);
 
 // exports
 
@@ -282,7 +282,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/home/home.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<div class=\"row\">\n  <div class=\"col-lg-4\"></div>\n  <div class=\"col-lg-4\">\n    <div class=\"input-group\">\n      <input [(ngModel)]=\"address\" name=\"address\" type=\"text\" class=\"form-control\" />\n      <span class=\"input-group-btn\">\n        <button (click)=\"search()\" class=\"btn btn-default\"  type=\"button\">Search</button>\n      </span>\n    </div><!-- /input-group -->\n  </div><!-- /.col-lg-4 -->\n  <div class=\"col-lg-4\"></div>\n</div>\n"
+module.exports = "\n<div class=\"row\">\n  <div class=\"col-lg-4\"></div>\n  <div class=\"col-lg-4\">\n    <label>{{_range}} {{unit}}</label>\n    <input type=\"range\"  [(ngModel)]=\"range\" name=\"\" id=\"points\" value=\"range\" min=\"0\" max=\"3000\">\n    <div class=\"input-group\">\n      <input [(ngModel)]=\"address\" name=\"address\" type=\"text\" class=\"form-control\" />\n      <span class=\"input-group-btn\">\n        <button (click)=\"search()\" class=\"btn btn-default\"  type=\"button\">Search</button>\n      </span>\n    </div><!-- /input-group -->\n  </div><!-- /.col-lg-4 -->\n  <div  *ngFor=\"let result of results\" class=\"container\">\n    <li> <b>Address:</b> {{result.destination_address}} <b>ranges:</b> {{result.distance.text}}</li>\n  </div>\n  <div class=\"col-lg-4\"></div>\n</div>\n"
 
 /***/ }),
 
@@ -310,16 +310,41 @@ var HomeComponent = (function () {
     function HomeComponent(http, searchReqService) {
         this.http = http;
         this.searchReqService = searchReqService;
+        this.unit = "miles";
+        this._range = 100;
     }
+    Object.defineProperty(HomeComponent.prototype, "range", {
+        set: function (range) {
+            this._range = range;
+            this.doSomething(this._range);
+        },
+        enumerable: true,
+        configurable: true
+    });
+    HomeComponent.prototype.doSomething = function (number) {
+        if (number == 1) {
+            this.unit = "mile";
+        }
+        else {
+            this.unit = "miles";
+        }
+    };
     HomeComponent.prototype.ngOnInit = function () {
     };
     HomeComponent.prototype.search = function () {
-        this.searchReqService.search(this.address).subscribe(function (data) {
-            console.log(data);
+        var _this = this;
+        this.searchReqService.search(this.address, this._range).subscribe(function (data) {
+            _this.results = data;
+            console.log(_this.results);
         });
     };
     return HomeComponent;
 }());
+__decorate([
+    Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Input"])(),
+    __metadata("design:type", Number),
+    __metadata("design:paramtypes", [Number])
+], HomeComponent.prototype, "range", null);
 HomeComponent = __decorate([
     Object(__WEBPACK_IMPORTED_MODULE_0__angular_core__["Component"])({
         selector: 'app-home',
@@ -519,7 +544,7 @@ exports = module.exports = __webpack_require__("../../../../css-loader/lib/css-b
 
 
 // module
-exports.push([module.i, "", ""]);
+exports.push([module.i, "img {\n  width: 300px;\n  height: 300px;\n  margin: 5px;\n}\n\n\n.containa {\n  display: -webkit-box;\n  display: -ms-flexbox;\n  display: flex;\n  -webkit-box-orient: horizontal;\n  -webkit-box-direction: normal;\n      -ms-flex-direction: row;\n          flex-direction: row;\n  -ms-flex-wrap: wrap;\n      flex-wrap: wrap;\n}\n", ""]);
 
 // exports
 
@@ -532,7 +557,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/profile/profile.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<form class=\"container\">\n  <h2 class=\"page-header\">Profile</h2>\n  <a *ngIf=\"true\" href=\"/instagram/authenticate\" class=\"btn btn-primary\">Authorize Instagram</a>\n</form>\n"
+module.exports = "<form class=\"container\">\n  <h2 class=\"page-header\">Address</h2>\n  <h3>9423 Kinnerton Pl </h3>\n  <h2 class=\"page-header\">Pictures</h2>\n  <a *ngIf=\"isValid\" href=\"/instagram/authenticate\" class=\"btn btn-primary\">Authorize Instagram</a>\n  <div *ngIf=\"!isValid\" class=\"containa\">\n    <div *ngFor=\"let picture of pictures\">\n      <img src={{picture}} />\n    </div>\n  </div>\n</form>\n"
 
 /***/ }),
 
@@ -557,21 +582,35 @@ var __metadata = (this && this.__metadata) || function (k, v) {
 var ProfileComponent = (function () {
     function ProfileComponent(authService) {
         this.authService = authService;
-        this.state = false;
+        this.isValid = false;
     }
     ProfileComponent.prototype.checkToken = function () {
         var _this = this;
         this.authService.validateInstagramToken().subscribe(function (data) {
+            console.log(data);
             if (data["_body"] == "TOKEN STILL VALID") {
-                _this.state = false;
+                _this.isValid = false;
+                _this.loadPictures();
             }
             else {
-                _this.state = true;
+                _this.isValid = true;
             }
+        });
+    };
+    ProfileComponent.prototype.loadPictures = function () {
+        var _this = this;
+        this.authService.getProfile().subscribe(function (data) {
+            if (data.user.instagram.pictures) {
+                _this.pictures = data.user.instagram.pictures;
+            }
+            console.log(data);
         });
     };
     ProfileComponent.prototype.ngOnInit = function () {
         this.checkToken();
+        this.loadPictures();
+        // if(!this.isValid){
+        // }
     };
     return ProfileComponent;
 }());
@@ -610,7 +649,7 @@ module.exports = module.exports.toString();
 /***/ "../../../../../src/app/components/register/register.component.html":
 /***/ (function(module, exports) {
 
-module.exports = "<form class=\"container\" (submit)=\"onRegisterSubmit()\">\n  <h2 class=\"page-header\">Register</h2>\n  <div class=\"form-group\">\n    <label>Email</label>\n    <input type=\"text\" [(ngModel)]=\"email\" name=\"email\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n    <label>Work Address</label>\n    <input type=\"text\" [(ngModel)]=\"address\" name=\"address\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\" id=\"checklist\">\n\n    <div class=\"contain\">\n      <label class=\"container\">One\n        <input type=\"checkbox\" checked=\"checked\">\n        <span class=\"checkmark\"></span>\n      </label>\n\n      <label class=\"container\">Two\n        <input type=\"checkbox\">\n        <span class=\"checkmark\"></span>\n      </label>\n\n      <label class=\"container\">Three\n        <input type=\"checkbox\">\n        <span class=\"checkmark\"></span>\n      </label>\n\n      <label class=\"container\">Four\n        <input type=\"checkbox\">\n        <span class=\"checkmark\"></span>\n      </label>\n    </div>\n    <div class=\"contain\">\n      <label class=\"container\">One\n        <input type=\"checkbox\" checked=\"checked\">\n        <span class=\"checkmark\"></span>\n      </label>\n\n      <label class=\"container\">Two\n        <input type=\"checkbox\">\n        <span class=\"checkmark\"></span>\n      </label>\n\n      <label class=\"container\">Threeeee\n        <input type=\"checkbox\">\n        <span class=\"checkmark\"></span>\n      </label>\n\n      <label class=\"container\">Four\n        <input type=\"checkbox\">\n        <span class=\"checkmark\"></span>\n      </label>\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <label>Password</label>\n    <input type=\"text\" [(ngModel)]=\"password\" name=\"password\" type=\"password\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n    <label>Confirm Password</label>\n    <input type=\"text\" [(ngModel)]=\"confirmPassword\" name=\"confirmPassword\" type=\"password\"  class=\"form-control\">\n  </div>\n  <input type=\"submit\" class=\"btn btn-primary\" value=\"Submit\">\n</form>\n"
+module.exports = "<form class=\"container\" (submit)=\"onRegisterSubmit()\">\n  <h2 class=\"page-header\">Register</h2>\n  <div class=\"form-group\">\n    <label>Email</label>\n    <input type=\"text\" [(ngModel)]=\"email\" name=\"email\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n    <label>Full Name</label>\n    <input type=\"text\" [(ngModel)]=\"fullName\" name=\"fullName\" class=\"form-control\">\n  </div>\n\n  <div class=\"form-group\">\n    <label>Work Address</label>\n    <input type=\"text\" [(ngModel)]=\"address\" name=\"address\" class=\"form-control\">\n  </div>\n    <label>Styles</label><br/>\n  <div class=\"form-group\" id=\"checklist\">\n\n    <div class=\"contain\">\n      <label class=\"container\">Traditional\n        <input type=\"checkbox\">\n        <span class=\"checkmark\"></span>\n      </label>\n\n      <label class=\"container\">Realism\n        <input type=\"checkbox\">\n        <span class=\"checkmark\"></span>\n      </label>\n\n      <label class=\"container\">Watercolor\n        <input type=\"checkbox\">\n        <span class=\"checkmark\"></span>\n      </label>\n\n      <label class=\"container\">Tribal\n        <input type=\"checkbox\">\n        <span class=\"checkmark\"></span>\n      </label>\n    </div>\n    <div class=\"contain\">\n      <label class=\"container\">New School\n        <input type=\"checkbox\">\n        <span class=\"checkmark\"></span>\n      </label>\n\n      <label class=\"container\">Neo Traditional\n        <input type=\"checkbox\">\n        <span class=\"checkmark\"></span>\n      </label>\n\n      <label class=\"container\">Japanese\n        <input type=\"checkbox\">\n        <span class=\"checkmark\"></span>\n      </label>\n\n      <label class=\"container\">Black and Grey\n        <input type=\"checkbox\">\n        <span class=\"checkmark\"></span>\n      </label>\n    </div>\n  </div>\n  <div class=\"form-group\">\n    <label>Password</label>\n    <input type=\"text\" [(ngModel)]=\"password\" name=\"password\" type=\"password\" class=\"form-control\">\n  </div>\n  <div class=\"form-group\">\n    <label>Confirm Password</label>\n    <input type=\"text\" [(ngModel)]=\"confirmPassword\" name=\"confirmPassword\" type=\"password\"  class=\"form-control\">\n  </div>\n\n  <input type=\"submit\" class=\"btn btn-primary\" value=\"Submit\">\n</form>\n"
 
 /***/ }),
 
@@ -653,7 +692,8 @@ var RegisterComponent = (function () {
         var user = {};
         user["email"] = this.email;
         user["password"] = this.password;
-        if (this.validate.validateRegister(user, this.confirmPassword)) {
+        user["address"] = this.address;
+        if (this.validate.validateRegister(user, this.confirmPassword, this.address)) {
             this.authService.registerUser(user).subscribe(function (data) {
                 if (data.success) {
                     _this.flashMessage.show('Registration successful!', { cssClass: 'alert-success', timeout: 3000 });
@@ -662,19 +702,34 @@ var RegisterComponent = (function () {
                     _this.flashMessage.show('User already exists', { cssClass: 'alert-danger', timeout: 3000 });
                 }
             });
-            this.router.navigate(['/login']);
+            //this.router.navigate(['/login']);
         }
         else {
-            if (!this.validate.validatePasswordsMatch(this.password, this.confirmPassword)) {
-                this.flashMessage.show('Passwords need to match', { cssClass: 'alert-danger', timeout: 3000 });
+            if (this.validate.isUndefined(this.email) || !this.validate.requiredLength(this.email, 0)) {
+                this.flashMessage.show('Please enter an email', { cssClass: 'alert-danger', timeout: 3000 });
             }
-            if (!this.validate.validateEmail(this.email)) {
+            else if (!this.validate.validateEmail(this.email)) {
                 this.flashMessage.show('Not a valid email address', { cssClass: 'alert-danger', timeout: 3000 });
             }
-            if (!this.validate.requiredLength(this.password, 6)) {
-                this.flashMessage.show('Password need to be longer', { cssClass: 'alert-danger', timeout: 3000 });
+            if (this.validate.isUndefined(this.address) || !this.validate.requiredLength(this.address, 0)) {
+                this.flashMessage.show('Please enter an address', { cssClass: 'alert-danger', timeout: 3000 });
             }
-            this.router.navigate(['login']);
+            if (this.validate.isUndefined(this.password)) {
+                this.flashMessage.show('Please enter a password', { cssClass: 'alert-danger', timeout: 3000 });
+            }
+            else if (this.validate.isUndefined(this.confirmPassword)) {
+                this.flashMessage.show('Please enter your password confirmation', { cssClass: 'alert-danger', timeout: 3000 });
+            }
+            else if (!this.validate.requiredLength(this.password, 6)) {
+                this.flashMessage.show('Password needs to be at least 6 characters long', { cssClass: 'alert-danger', timeout: 3000 });
+            }
+            else if (!this.validate.validatePasswordsMatch(this.password, this.confirmPassword)) {
+                this.flashMessage.show('Passwords need to match', { cssClass: 'alert-danger', timeout: 4000 });
+            }
+            // if(!this.validate.requiredLength(this.address, 0)){
+            //   this.flashMessage.show('Please enter in an adress', {cssClass: 'alert-danger', timeout: 3000});
+            // }
+            //  this.router.navigate(['login']);
         }
     };
     return RegisterComponent;
@@ -833,10 +888,11 @@ var SearchRequestsService = (function () {
         this.baseURL = "http://localhost:3000/";
     }
     //search based on a given address
-    SearchRequestsService.prototype.search = function (address) {
-        var requestURL = this.baseURL + "google/distance";
+    SearchRequestsService.prototype.search = function (address, range) {
+        var requestURL = this.baseURL + "google/distances";
         var params = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["URLSearchParams"]();
         params.set('address', address);
+        params.set('range', range);
         var requestOptions = new __WEBPACK_IMPORTED_MODULE_1__angular_http__["RequestOptions"]();
         requestOptions.search = params;
         return this.http.get(requestURL, requestOptions).map(function (res) { return res.json(); });
@@ -884,19 +940,22 @@ var ValidateService = (function () {
     ValidateService.prototype.validatePasswordsMatch = function (password, passwordConfirmation) {
         return password == passwordConfirmation;
     };
-    ValidateService.prototype.validateRegister = function (user, passwordConfirmation) {
-        if (this.isUndefined(user.email) || this.isUndefined(user.password) || this.isUndefined(passwordConfirmation)) {
+    ValidateService.prototype.validateRegister = function (user, passwordConfirmation, address) {
+        if (this.isUndefined(user.email) || this.isUndefined(user.password) || this.isUndefined(passwordConfirmation) || this.isUndefined(address)) {
             return false;
         }
         else if (!this.validatePasswordsMatch(user.password, passwordConfirmation)) {
+            return false;
+        }
+        else if (address.length == 0 || user.password.length < 6) {
             return false;
         }
         else {
             return this.validateEmail(user.email);
         }
     };
-    ValidateService.prototype.requiredLength = function (password, length) {
-        return password.length > length;
+    ValidateService.prototype.requiredLength = function (value, length) {
+        return value.length > length;
     };
     //user should have both a valid email (doesn't need to be regisetered) and password as input
     ValidateService.prototype.validateLogin = function (user) {

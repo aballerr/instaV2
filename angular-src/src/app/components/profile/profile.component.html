@@ -1,4 +1,11 @@
 <form class="container">
-  <h2 class="page-header">Profile</h2>
-  <a *ngIf="true" href="/instagram/authenticate" class="btn btn-primary">Authorize Instagram</a>
+  <h2 class="page-header">Address</h2>
+  <h3>9423 Kinnerton Pl </h3>
+  <h2 class="page-header">Pictures</h2>
+  <a *ngIf="isValid" href="/instagram/authenticate" class="btn btn-primary">Authorize Instagram</a>
+  <div *ngIf="!isValid" class="containa">
+    <div *ngFor="let picture of pictures">
+      <img src={{picture}} />
+    </div>
+  </div>
 </form>

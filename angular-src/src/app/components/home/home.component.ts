@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Input, SimpleChanges } from '@angular/core';
 import { Http, URLSearchParams, RequestOptions } from '@angular/http';
 import { SearchRequestsService } from '../../services/search-requests.service';
 
@@ -9,19 +9,41 @@ import { SearchRequestsService } from '../../services/search-requests.service';
 })
 export class HomeComponent implements OnInit {
   address: string;
+  results: any;
+  unit: string = "miles";
+  _range = 100;
+
+  @Input() set range(range: number) {
+    this._range = range;
+    this.doSomething(this._range);
+  }
+
+  doSomething(number) {
+    if (number == 1){
+      this.unit = "mile"
+    }
+    else {
+      this.unit = "miles";
+    }
+  }
+
+
+
 
   constructor(private http: Http,
     private searchReqService: SearchRequestsService) { }
 
-  ngOnInit() {
+    ngOnInit() {
+    }
+
+
+    search() {
+
+      this.searchReqService.search(this.address, this._range).subscribe(data => {
+        this.results = data;
+        console.log(this.results)
+
+      });
+    }
+
   }
-
-
-  search() {
-
-    this.searchReqService.search(this.address).subscribe(data => {
-      console.log(data);
-    });
-  }
-
-}

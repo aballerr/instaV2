@@ -6,6 +6,8 @@ const passport = require('passport');
 const mongoose = require('mongoose');
 const config = require('./config/database');
 
+
+
 mongoose.connect(config.database, {
   useMongoClient: true
 });
@@ -22,6 +24,8 @@ const app = express();
 const users = require('./routes/users');
 const instagram = require('./routes/instagram');
 const google = require('./routes/google');
+const user = require('./models/user');
+
 
 app.use(express.static(path.join(__dirname, 'public')));
 

@@ -3,6 +3,10 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const config = require('../config/database');
 const request = require('request');
+const instagramRequests = require('../requests/instagram');
+const userRequestData = instagramRequests.userRequestData;
+const userRequestRecentImages = instagramRequests.userRequestRecentImages;
+const getRandomuserData = require('./data/address').getRandomuserData;
 
 // User Schema
 const UserSchema = mongoose.Schema({
@@ -18,6 +22,10 @@ const UserSchema = mongoose.Schema({
   instagram_verified: {
     type: Boolean,
     required: true
+  },
+  address: {
+    type: String,
+    required: false
   },
   instagram: {
     required: false,
@@ -73,14 +81,10 @@ module.exports.updateInstagramAuthorizationStatus = function(id, data, callback)
     user.instagram.full_name = userInfo.full_name;
     user.instagram.access_token = data.accessToken;
 
-    var requestURL ="https://api.instagram.com/v1/users/"+userInfo.id+"/?access_token="+data.accessToken;
-    request(requestURL, (err, res, body) => {
-      body = JSON.parse(body);
+    userRequestData(data.accessToken, "user", userInfo.id, user, callback);
+    userRequestRecentImages(data.accessToken, "images", userInfo.id, user, callback);
+    //userRequestRecentImages()
 
-
-      user.instagram.followed_by = body.data.counts.followed_by;
-        user.save(callback);
-    })
   });
 }
 
@@ -90,4 +94,22 @@ module.exports.comparePassword = function(candidatePassword, hash, callback) {
     if(err) throw err;
     callback(null, isMatch);
   });
+}
+
+module.exports.generateRandomUserData = function(callback) {
+  var data = getRandomuserData();
+
+  for(var i in data){
+    var user = data[i];
+    console.log(user);
+
+    let newUser = new User({
+      email: user.email,
+      password: user.password,
+      address: user.address,
+      instagram_verified: false
+    });
+    newUser.save(callback);
+
+  }
 }

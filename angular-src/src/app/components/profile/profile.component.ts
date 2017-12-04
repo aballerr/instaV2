@@ -7,8 +7,8 @@ import { AuthorizationService } from '../../services/authorization.service';
   styleUrls: ['./profile.component.css']
 })
 export class ProfileComponent implements OnInit {
-  state:boolean = false;
-
+  isValid:boolean = false;
+  pictures: any;
   constructor(private authService: AuthorizationService) {
 
 
@@ -17,18 +17,35 @@ export class ProfileComponent implements OnInit {
 
   checkToken() {
     this.authService.validateInstagramToken().subscribe(data => {
-
+      console.log(data);
        if(data["_body"] == "TOKEN STILL VALID"){
-         this.state = false;
+         this.isValid = false;
+         this.loadPictures();
        }
        else {
-         this.state = true;
+         this.isValid = true;
        }
+    });
+  }
+
+  loadPictures() {
+    this.authService.getProfile().subscribe(data => {
+      if(data.user.instagram.pictures){
+        this.pictures = data.user.instagram.pictures;
+      }
+      console.log(data);
+
     });
   }
 
   ngOnInit() {
     this.checkToken();
+    this.loadPictures();
+
+    // if(!this.isValid){
+
+    // }
+
   }
 
 }

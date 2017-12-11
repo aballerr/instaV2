@@ -15,6 +15,8 @@ import { AuthorizationService } from './services/authorization.service';
 import { ProfileComponent } from './components/profile/profile.component';
 import { AuthenticateComponent } from './components/authenticate/authenticate.component';
 import { SearchRequestsService } from './services/search-requests.service';
+import { AdministratorComponent } from './components/adminComponents/administrator/administrator.component';
+import { ApproveUsersComponent } from './components/adminComponents/approve-users/approve-users.component';
 
 const appRoutes: Routes = [
   {
@@ -36,6 +38,10 @@ const appRoutes: Routes = [
   {
     path: 'authenticate',
     component: AuthenticateComponent
+  },
+  {
+    path: 'admin',
+    component: AdministratorComponent
   }
 ]
 
@@ -47,7 +53,9 @@ const appRoutes: Routes = [
     NavbarComponent,
     LoginComponent,
     ProfileComponent,
-    AuthenticateComponent
+    AuthenticateComponent,
+    AdministratorComponent,
+    ApproveUsersComponent
   ],
   imports: [
     BrowserModule,

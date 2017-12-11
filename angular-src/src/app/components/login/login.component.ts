@@ -40,7 +40,7 @@ export class LoginComponent implements OnInit {
       });
     }
     else {
-      console.log("not a valid use");
+      console.log("not a valid user");
       if(!this.validate.validateEmail(this.email)){
         this.flashMessage.show('Not a valid email address', {cssClass: 'alert-danger', timeout: 3000});
       }

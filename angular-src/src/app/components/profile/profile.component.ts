@@ -41,6 +41,8 @@ export class ProfileComponent implements OnInit {
   ngOnInit() {
     this.checkToken();
     this.loadPictures();
+    this.authService.loadToken();
+    console.log(this.authService.authToken);
 
     // if(!this.isValid){
 

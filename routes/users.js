@@ -82,17 +82,10 @@ router.get('/randomUserData', (req, res, next) => {
 });
 
 
-router.post('/profile', passport.authenticate('jwt', {session: false}), (req, res, next) => {
-
-
-  res.send("it worked!");
-});
-
 // get the users profile
 router.get('/profile', passport.authenticate('jwt', {session: false}), (req, res, next) => {
    res.json({user: req.user})
 });
-
 
 
 module.exports = router;

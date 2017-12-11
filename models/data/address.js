@@ -1,12 +1,7 @@
 /*The purpose of this class is to generate large amounts of user data.  It is only useful in
-development and has no actual use in development.  
+development and has no actual use in development.
  */
 
-
-module.exports.address = {
-  "hello there":"hi",
-  "me":"bye"
-};
 
 
 //got address from https://fakena.me/random-real-address/
@@ -23,7 +18,6 @@ var addresses = [
 "3224 Yorba Linda Linda Blvd, Fullerton, CA 92831-0000",
 "1628 Wynsam St, Philadelphia, PA 19138-1611"
 ];
-
 
 
 

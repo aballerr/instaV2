@@ -3,10 +3,8 @@ const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const config = require('../config/database');
 const request = require('request');
-const instagramRequests = require('../requests/instagram');
-const userRequestData = instagramRequests.userRequestData;
-const userRequestRecentImages = instagramRequests.userRequestRecentImages;
-const getRandomuserData = require('./data/address').getRandomuserData;
+
+
 
 // User Schema
 const UserSchema = mongoose.Schema({
@@ -27,6 +25,10 @@ const UserSchema = mongoose.Schema({
     type: String,
     required: false
   },
+  styles: {
+    type: Array,
+    required: false
+  },
   instagram: {
     required: false,
     id: {},
@@ -41,7 +43,6 @@ const UserSchema = mongoose.Schema({
 const User = module.exports = mongoose.model('User', UserSchema);
 
 module.exports.getUserById = function(id, callback) {
-  console.log(id);
   User.findById(id, callback);
 }
 
@@ -49,6 +50,11 @@ module.exports.getUserById = function(id, callback) {
 module.exports.getUserByEmail = function(email, callback) {
   const query = {email: email}
   User.findOne(query, callback);
+}
+
+
+module.exports.getAll = function(callback){
+  User.find({}, callback);
 }
 
 //used for user authentication
@@ -69,7 +75,15 @@ module.exports.addUser = function(newUser, callback) {
   });
 }
 
-//upon authentication, update their current record in the mongo database, including their instagram access token
+
+
+
+/**
+* Used in validating an authentication requests password
+* @param {string} candidatePassword - non-hashed version of users password
+* @param {Object} data - data object that contains the user info for instagram
+* @param {function} callback
+*/
 module.exports.updateInstagramAuthorizationStatus = function(id, data, callback){
   var userInfo = data.user;
 
@@ -88,7 +102,12 @@ module.exports.updateInstagramAuthorizationStatus = function(id, data, callback)
   });
 }
 
-//compare given password with password of user in database
+/**
+* Used in validating an authentication requests password
+* @param {string} candidatePassword - non-hashed version of users password
+* @param {string} hash - hashed versions of users password retrieved from database
+* @param {function} callback
+*/
 module.exports.comparePassword = function(candidatePassword, hash, callback) {
   bcrypt.compare(candidatePassword, hash, (err, isMatch) => {
     if(err) throw err;
@@ -101,7 +120,7 @@ module.exports.generateRandomUserData = function(callback) {
 
   for(var i in data){
     var user = data[i];
-    console.log(user);
+    console.log("in models/user/comparePassword" + user);
 
     let newUser = new User({
       email: user.email,
@@ -110,6 +129,5 @@ module.exports.generateRandomUserData = function(callback) {
       instagram_verified: false
     });
     newUser.save(callback);
-
   }
 }

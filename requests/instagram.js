@@ -44,15 +44,3 @@ module.exports.userRequestRecentImages = function(accessToken, requestType, user
       user.save(callback);
   });
 }
-
-
-// var requestURL ="https://api.instagram.com/v1/users/"+userInfo.id+"/?access_token="+data.accessToken;
-// request(requestURL, (err, res, body) => {
-//   body = JSON.parse(body);
-//
-//
-//   user.instagram.followed_by = body.data.counts.followed_by;
-//
-//
-//     user.save(callback);
-// });

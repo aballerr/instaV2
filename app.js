@@ -5,7 +5,10 @@ const cors = require('cors');
 const passport = require('passport');
 const mongoose = require('mongoose');
 const config = require('./config/database');
+const addAdmin = require('./miscellaneous/admin');
 
+
+//addAdmin.addAdmin("alex", "123");
 
 
 mongoose.connect(config.database, {
@@ -23,8 +26,10 @@ mongoose.connection.on('error', (err) => {
 const app = express();
 const users = require('./routes/users');
 const instagram = require('./routes/instagram');
+const admin = require('./routes/admin');
 const google = require('./routes/google');
 const user = require('./models/user');
+
 
 
 app.use(express.static(path.join(__dirname, 'public')));
@@ -44,11 +49,13 @@ app.use(passport.session());
 
 
 require('./config/passport')(passport);
+require('./config/passport').adminStrategy(passport);
 
 //routes
 app.use('/users', users);
 app.use('/instagram', instagram);
 app.use('/google', google);
+app.use('/admin', admin);
 
 app.get('*', (req, res) => {
 

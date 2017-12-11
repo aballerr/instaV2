@@ -1,0 +1,36 @@
+<form *ngIf="notLoggedIn()" class="container" (submit)="onLoginSubmit()">
+  <h2 class="page-header">Login</h2>
+  <div class="form-group">
+    <label>Username</label>
+    <input type="text" class="form-control" [(ngModel)]="email" name="username">
+  </div>
+  <div class="form-group">
+    <label>Password</label>
+    <input type="password" class="form-control" [(ngModel)]="password" name="password">
+  </div>
+  <input type="submit" class="btn btn-primary" value="Login">
+</form>
+<div *ngIf="!notLoggedIn()" class="container">
+<h1>This will display a list of users </h1>
+<div *ngFor="let user of users; let i = index" class="">
+ <table class="table table-bordered table-responsive table-striped">
+  <thead class="thead">
+    <tr class="thead-cols">
+      <th class="info">USER ID</th>
+      <th class="info">INSTAGRAM USERNAME</th>
+      <th class="info">Row number </th>
+      <th class="info">APPROVE OR DENY</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>{{user._id}}</td>
+      <td>{{user.instagramUsername}}</td>
+      <td>{{i}}</td>
+      <td><button (click)="approve(user)" type="submit" class="btn btn-primary">Approve</button>
+    </tr>
+  </tbody>
+</table>
+</div>
+<button (click)="loadUsers()" type="submit" class="btn btn-primary">Load Users</button><button (click)="submitApproved()" type="submit" class="btn btn-primary">Submit Approval</button><button *ngIf="!notLoggedIn()" (click)="logout()" type="submit" class="btn btn-primary">Logout</button>
+</div>

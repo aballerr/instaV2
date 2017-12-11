@@ -69,7 +69,7 @@ router.get('/validate',  passport.authenticate('jwt', {session: false}), (req, r
   var userID = req.user.instagram.id;
   var accessToken = "/?access_token="+req.user.instagram.access_token;
   var requestURL = "https://api.instagram.com/v1/users/"+userID+accessToken;
-    console.log(requestURL);
+  
 
     request(requestURL, (err, res2, body) => {
       try {
